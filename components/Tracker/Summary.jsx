@@ -47,6 +47,7 @@ useEffect(()=>{
   const currentDate = new Date()
   
 const currentDay = currentDate.toISOString().split('T')[0];
+
 const currentWeek = getISOWeek(currentDate);
 const currentMonth = currentDate.toISOString().split('-').slice(0, 2).join('-');
 
@@ -55,6 +56,7 @@ const currentMonth = currentDate.toISOString().split('-').slice(0, 2).join('-');
 
 for(let i = 0;i < sessions.length; i++){
   if(sessions[i].completed === true && sessions[i].endTime.split('T')[0] === currentDay) {
+    
   setDailyStats(state =>{
    return  {
     ...state,

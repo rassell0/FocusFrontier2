@@ -28,8 +28,9 @@ const WeekGraph = () => {
   
       // Populate the array with session data
       sessions.forEach((session) => {
-        
+   
         const sessionDate = new Date(session.endTime).getDay();
+     
         if (getISOWeek(session.endTime) === currentWeek && session.completed === true) {
           weeklyDataArray[sessionDate] += 1;
         }
@@ -45,7 +46,7 @@ const WeekGraph = () => {
 
 
 
-
+const idk =[12,6,9,10,7,59,6]
   
 
       const data = {

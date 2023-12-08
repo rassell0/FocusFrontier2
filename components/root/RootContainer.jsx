@@ -13,13 +13,23 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import {useSelector,useDispatch} from "react-redux"
 import { setTasks } from '../../redux/tasks';
 import { setSessions } from '../../redux/sessions';
+import * as Notifications from 'expo-notifications';
 const RootContainer = () => {
     const Tab = createBottomTabNavigator()
 
 const idk = useSelector(state => state.tasks)
 
 const dispatch = useDispatch()
- 
+useEffect(() => {
+  const requestNotificationPermission = async () => {
+    const { status } = await Notifications.requestPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Permission to receive notifications was denied!');
+    }
+  };
+
+  requestNotificationPermission();
+}, []);
 
 useEffect(()=>{
   async function config(){

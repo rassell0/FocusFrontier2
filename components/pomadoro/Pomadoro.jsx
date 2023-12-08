@@ -47,6 +47,7 @@ const PomodoroTimer = () => {
     }
     addSessiontoDb();
   }, [sessions]);
+  
 
   function notification() {
     Notifications.scheduleNotificationAsync({
