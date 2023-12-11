@@ -4,6 +4,7 @@ import tailwind from 'twrnc';
 import PomodoroBtns from './PomodoroBtns';
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
 import * as Notifications from 'expo-notifications';
+import * as Svg from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { addSession } from '../../redux/sessions';
 import { db } from '../../firebaseConfig';

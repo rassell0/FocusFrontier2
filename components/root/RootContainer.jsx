@@ -28,7 +28,7 @@ useEffect(() => {
     }
   };
 
-  requestNotificationPermission();
+//  requestNotificationPermission();
 }, []);
 
 useEffect(()=>{
