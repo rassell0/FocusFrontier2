@@ -6,7 +6,7 @@ import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
 import * as Notifications from 'expo-notifications';
 import * as Svg from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { addSession } from '../../redux/sessions';
+import { addSession } from '../../redux/user';
 import { db } from '../../firebaseConfig';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,18 +27,27 @@ const PomodoroTimer = () => {
   const [minutes, setMinutes] = useState(25);
   const [isActive, setIsActive] = useState(false);
   const [isResting, setIsResting] = useState(false);
+  const [currentduration,setCurrentDuration] = useState(0)
   const [key, setKey] = useState(0);
   const [tracker, setTracker] = useState({
     startTime: null,
     endTime: null,
   });
   const dispatch = useDispatch();
-  const sessions = useSelector((state) => state.sessions.sessions);
+  const sessions = useSelector((state) => state.user.sessions);
+  const uid = useSelector((state) => state.user.id);
 
-  async function addSessiontoDb() {
-    const id = await AsyncStorage.getItem('id');
-    const userRef = doc(db, 'users', id);
-    await updateDoc(userRef, { sessions });
+  async function addSessiontoDb(data) {
+    fetch("http://192.168.1.71:4000/addSession",{
+      method:"POST",
+      body:JSON.stringify({
+        id:uid,
+        data
+      }),
+      headers:{
+        "Content-Type":"application/json"
+      }
+    }) 
   }
 
   useEffect(() => {
@@ -46,8 +55,8 @@ const PomodoroTimer = () => {
       isInitial = false;
       return;
     }
-    addSessiontoDb();
-  }, [sessions]);
+
+  }, [sessions]); 
   
 
   function notification() {
@@ -78,46 +87,76 @@ const PomodoroTimer = () => {
     setIsResting(true);
     setKey((state) => state + 1);
     setMinutes(5);
+    setTracker({
+      startTime: null,
+      endTime: null, 
+    });
   }
 
+
   const handleStartPause = () => {
+  
     if (!isActive) {
       setTracker((state) => ({
         ...state,
         startTime: new Date(),
       }));
-    } else if (isActive && tracker.startTime !== null) {
-      setTracker((state) => ({
-        ...state,
-        endTime: new Date(),
-      }));
+    } else{
+      
+         const duration =((new Date() - tracker.startTime) / 1000);
+         setCurrentDuration(state => state + duration)
+         setTracker((state) => ({
+          ...state,
+          startTime: null,
+        })); 
+       
     }
     setIsActive(!isActive);
-  };
 
+  }; 
+
+   
   const handleReset = () => {
-    if (!isResting) {
-      let endTime = tracker.endTime ? tracker.endTime : new Date();
-      const duration = Math.floor((endTime - tracker.startTime) / 1000);
+    let endTime = new Date();
+if ( tracker.startTime === null && !isResting) { 
     dispatch(
         addSession({
-          startTime: tracker.startTime.toISOString().split('T')[0],
-          endTime: endTime.toISOString().split('T')[0],
-          duration,
-          completed: isResting ? true : false,
+          date: endTime.toISOString().split('T')[0],
+          duration:Math.round(currentduration),
+          completed:  false,
         })
       );
-      
+      addSessiontoDb({
+        endTime: endTime.toISOString().split('T')[0],
+        duration:Math.round(currentduration),
+        completed:  false,
+      })
+    } else if (tracker.startTime !== null){
+      const duration =((endTime - tracker.startTime) / 1000);
+      dispatch(
+        addSession({
+          date: endTime.toISOString().split('T')[0],
+          duration:Math.round(currentduration + duration),
+          completed:  false,
+        })
+      );
+      addSessiontoDb({
+        endTime: endTime.toISOString().split('T')[0],
+        duration:Math.round(currentduration + duration),
+        completed:  false,
+      })
     }
-
+   
     setKey((state) => state + 1);
     setIsActive(false);
     setMinutes(25);
     setTracker({
       startTime: null,
-      endTime: null,
+      endTime: null, 
     });
+    setCurrentDuration(0)
     setIsResting(false);
+
   };
 
   return (
@@ -138,15 +177,21 @@ const PomodoroTimer = () => {
               handleReset();
             } else {
               let endTime = new Date();
-              const duration = Math.floor((endTime - tracker.startTime) / 1000);
+              //
+              const duration = ((endTime - tracker.startTime) / 1000);
               dispatch(
                 addSession({
-                  startTime: tracker.startTime.toISOString(),
-                  endTime: endTime.toISOString(),
-                  duration,
+                
+                  endTime: endTime.toISOString().split('T')[0],
+                  duration:Math.round(currentduration + duration),
                   completed: true,
                 })
               );
+              addSessiontoDb({
+                endTime: endTime.toISOString().split('T')[0],
+                duration:Math.round(currentduration + duration),
+                completed: true,
+              })
               notification();
               startBreak();
             }

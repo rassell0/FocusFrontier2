@@ -15,7 +15,7 @@ import TaskModal from './TaskModal';
 import { useSelector,useDispatch } from "react-redux"
 const TaskScreen = () => {
 
-  const tasks = useSelector(state =>state.tasks.tasks)
+  const tasks = useSelector(state =>state.user.tasks)
  
 const dispatch = useDispatch()
 const [showModal,setShowModal] = useState(false)

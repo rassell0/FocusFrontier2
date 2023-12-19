@@ -1,8 +1,8 @@
 import {configureStore } from "@reduxjs/toolkit"
-import tasks from "./tasks"
-import sessions from "./sessions"
+
+import user from "./user"
 
 
 export const store = configureStore({
-    reducer:{tasks,sessions}
+    reducer:{user}
 }) 

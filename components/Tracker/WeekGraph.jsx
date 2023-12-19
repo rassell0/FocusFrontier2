@@ -4,7 +4,7 @@ import { LineChart } from 'react-native-chart-kit'
 import tailwind from 'twrnc'
 import { useSelector } from 'react-redux'
 const WeekGraph = () => {
-  const sessions = useSelector(state => state.sessions.sessions)
+  const sessions = useSelector(state => state.user.sessions)
   const [weeklyData, setWeeklyData] = useState([0, 0, 0, 0, 0, 0, 0]);
   const getISOWeek = (date) => {
     const dt = new Date(date);
@@ -20,6 +20,7 @@ const WeekGraph = () => {
 
 
     useEffect(() => {
+      
       const currentDate = new Date();
       const currentWeek = getISOWeek(currentDate);
   

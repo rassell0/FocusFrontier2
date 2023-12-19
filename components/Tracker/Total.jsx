@@ -8,14 +8,15 @@ import { useState } from 'react';
 
 const Total = () => {
     const {width,height} = Dimensions.get("window")
-    const sessions = useSelector(state => state.sessions.sessions)
+    const sessions = useSelector(state => state.user.sessions)
 const [totalStats,setTotalStats] = useState({
   sessionsCompleted:0,
   timeFocused:0
 })
 
-
+console.log(totalStats.timeFocused / 60)
 useEffect(()=>{
+
 setTotalStats({
   sessionsCompleted:0,
   timeFocused:0
@@ -57,7 +58,7 @@ if(sessions[i].duration > 0){
 </View>
 <Divider/>
 <View>
-<Text style={[tailwind`mb-2 font-bold mt-1 text-2xl text-center  `,{color:"#eaf3fe"}]}>{Math.floor(totalStats.timeFocused / 60)}m</Text>
+<Text style={[tailwind`mb-2 font-bold mt-1 text-2xl text-center  `,{color:"#eaf3fe"}]}>{parseFloat((totalStats.timeFocused / 60).toFixed(2))} min</Text>
 <Text style={tailwind`text-center text-base w-25 font-semibold mb-1`}>Time Focused</Text>
 </View>
 

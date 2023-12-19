@@ -7,7 +7,18 @@ import { useSelector } from 'react-redux';
 import { useState } from 'react';
 const Summary = () => {
     const {width,height} = Dimensions.get("window")
-const sessions = useSelector(state => state.sessions.sessions)
+const sessions = useSelector(state => state.user.sessions)
+
+const getISOWeek = (date) => {
+  const dt = new Date(date);
+  dt.setHours(0, 0, 0, 0);
+  dt.setDate(dt.getDate() + 4 - (dt.getDay() || 7));
+  const yearStart = new Date(dt.getFullYear(), 0, 1);
+  return Math.ceil(((dt - yearStart) / 86400000 + 1) / 7);
+};
+
+
+
 const [dailyStats,setDailyStats] = useState({
   sessionsCompleted:0,
   timeFocused:0
@@ -21,17 +32,12 @@ const [weeklyStats,setWeeklyStats] = useState({
   timeFocused:0
 })
 
-const getISOWeek = (date) => {
-  const dt = new Date(date);
-  dt.setHours(0, 0, 0, 0);
-  dt.setDate(dt.getDate() + 4 - (dt.getDay() || 7));
-  const yearStart = new Date(dt.getFullYear(), 0, 1);
-  return Math.ceil(((dt - yearStart) / 86400000 + 1) / 7);
-};
+
 
 
 
 useEffect(()=>{
+  
   setDailyStats({
     sessionsCompleted:0,
     timeFocused:0
@@ -116,7 +122,7 @@ return
 
 
 },[sessions])
-
+//{parseFloat((dailyStats.timeFocused / 60).toFixed(2))}m
   return (
     <View>
         <View style={tailwind`my-4`}>
@@ -124,7 +130,7 @@ return
       <View style={[tailwind` rounded-md  justify-center items-center flex-row`,{backgroundColor:"#404661",width:width *.9,height:height*.3}]}>
 <View>
     <Text style={[tailwind`font-bold text-lg text-center`,{color:"#eaf3fe"}]}>Today</Text>
-    <Text style={tailwind`mt-2 mb-1 text-center`}>{Math.floor(dailyStats.timeFocused / 60)} min</Text>
+    <Text style={tailwind`mt-2 mb-1 text-center`}>{parseFloat((dailyStats.timeFocused / 60).toFixed(2))} min</Text>
     <Text style={[tailwind`mb-2 mt-1 text-sm text-center`,{color:"#eaf3fe"}]}>Focused Time</Text>
     <Text style={tailwind`text-center mb-1`}>{dailyStats.sessionsCompleted} sessions</Text>
     <Text style={[tailwind`text-center mt-1 text-sm`,{color:"#eaf3fe"}]}>Finished</Text>
@@ -132,7 +138,7 @@ return
 <Divider/>
 <View>
     <Text style={[tailwind`font-bold text-lg text-center`,{color:"#eaf3fe"}]}>This Week</Text>
-    <Text style={tailwind`mt-2 mb-1 text-center`}>{Math.floor(weeklyStats.timeFocused / 60)} min</Text>
+    <Text style={tailwind`mt-2 mb-1 text-center`}>{parseFloat((weeklyStats.timeFocused / 60).toFixed(2))} min</Text>
     <Text style={[tailwind`mb-2 mt-1 text-sm text-center`,{color:"#eaf3fe"}]}>Focused Time</Text>
     <Text style={tailwind`text-center mb-1`}>{weeklyStats.sessionsCompleted} sessions</Text>
     <Text style={[tailwind`text-center mt-1 text-sm`,{color:"#eaf3fe"}]}>Finished</Text>
@@ -140,7 +146,7 @@ return
 <Divider/>
 <View>
     <Text style={[tailwind`font-bold text-lg text-center`,{color:"#eaf3fe"}]}>This Month</Text>
-    <Text style={tailwind`mt-2 mb-1 text-center`}>{Math.floor(monthlyStats.timeFocused / 60)} min</Text>
+    <Text style={tailwind`mt-2 mb-1 text-center`}>{parseFloat((monthlyStats.timeFocused / 60).toFixed(2))} min</Text>
     <Text style={[tailwind`mb-2 mt-1 text-sm text-center`,{color:"#eaf3fe"}]}>Focused Time</Text>
     <Text style={tailwind`text-center mb-1`}>{monthlyStats.sessionsCompleted} sessions</Text>
     <Text style={[tailwind`text-center mt-1 text-sm`,{color:"#eaf3fe"}]}>Finished</Text>

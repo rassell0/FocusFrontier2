@@ -5,13 +5,13 @@ import {Ionicons} from "@expo/vector-icons"
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { SafeAreaView } from 'react-native';
 import { useDispatch,useSelector } from "react-redux"
-import { addTask } from '../../redux/tasks';
+import { addTask } from '../../redux/user';
 import { collection, addDoc ,doc, getDoc,setDoc ,updateDoc} from "firebase/firestore"; 
 import { db } from '../../firebaseConfig';
 import AsyncStorage from "@react-native-async-storage/async-storage"
 const TaskModal = ({closeModal}) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const tasks = useSelector(state =>state.tasks.tasks)
+  const user = useSelector(state =>state.user)
  
 const [date,setDate] = useState("")
 const [priority,setPriority] = useState("")
@@ -35,7 +35,6 @@ function handleConfirm(date){
 }
 
 function add(){
-
  dispatch(addTask({
   taskName,priority,date
 }))
@@ -45,14 +44,19 @@ addTasktoDb()
 
 
 async function addTasktoDb(){
-  const id = await AsyncStorage.getItem("id")
-  let temp = [...tasks,{
-    taskName,priority,date
-  }]
-  
-  const userRef = doc(db, "users",id);
-  await updateDoc(userRef, {
-    tasks :temp
+ 
+//192.168.1.71 mine
+  //10.2.3.232 maddie
+  fetch("http://192.168.1.71:4000/addSession",{
+    method:"POST",
+    body:JSON.stringify({
+  id:user.id,
+ task:{
+  taskName,priority,date
+}}),
+    headers:{
+      "Content-Type":"application/json"
+    }
   })
 }
 

@@ -9,7 +9,7 @@ import { useEffect } from 'react'
 const MonthGraph = () => {
 
     const {width,height} = Dimensions.get("window")
-    const sessions = useSelector(state => state.sessions.sessions)
+    const sessions = useSelector(state => state.user.sessions)
     const [monthlySessions,setMonthlySessions] = useState([0,0,0,0,0,0,0,0,0,0,0,0])
   
     const calculateMonthlyData = (currentMonth, sessions) => {
@@ -33,6 +33,7 @@ const MonthGraph = () => {
       
 
     useEffect(() => {
+  
       const currentMonth = getCurrentMonth();
       const monthlyData = calculateMonthlyData(currentMonth, sessions);
      setMonthlySessions(monthlyData);

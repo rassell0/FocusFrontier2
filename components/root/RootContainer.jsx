@@ -11,14 +11,14 @@ import TaskScreen from '../Tasks/TaskScreen';
 import TrackerScreen from '../Tracker/TrackerScreen';
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import {useSelector,useDispatch} from "react-redux"
-import { setTasks } from '../../redux/tasks';
-import { setSessions } from '../../redux/sessions';
+
 import * as Notifications from 'expo-notifications';
+import { setId, setTasks,setSessions } from '../../redux/user'; 
 const RootContainer = () => {
     const Tab = createBottomTabNavigator()
 
-const idk = useSelector(state => state.tasks)
-
+const idk = useSelector(state => state.user) 
+console.log(idk)
 const dispatch = useDispatch()
 useEffect(() => {
   const requestNotificationPermission = async () => {
@@ -32,39 +32,43 @@ useEffect(() => {
 }, []);
 
 useEffect(()=>{
+
   async function config(){
     const id = await AsyncStorage.getItem("id")
-  if(!id){
-    const timestamp = new Date().getTime();
-    const random = Math.floor(Math.random() * 10000);
-    const userId = `${timestamp}-${random}`;
-   const id = JSON.stringify(userId)
-  AsyncStorage.setItem("id",id)
-  try {
-    const userRef = collection(db, "users");
-  
-    await setDoc(doc(userRef, id), {
-      id,
-      tasks:[],
-      sessions:[]
-    });
-    console.log("Document written with ID: ", userRef.id);
 
- 
-  } catch (e) {
-    console.error("Error adding document: ", e);
-  }
-  }else{
-    const docRef = doc(db, "users", id);
-const docSnap = await getDoc(docRef);
-
-    dispatch(setTasks(docSnap.data().tasks))
-     dispatch(setSessions(docSnap.data().sessions))
-  }
-  }  
- 
-   //AsyncStorage.clear()
- config()     
+if(!id){
+  //10.2.3.232 maddie
+  // 192.168.1.71 mine
+   fetch("http://192.168.1.71:4000/createUser").then(res =>{
+      return res.json()
+    }).then(res=>{
+      AsyncStorage.setItem("id",res._id)
+     dispatch(setId(res._id))
+    }).catch(err =>{
+      console.log(err)
+    })
+}else{
+  fetch("http://192.168.1.71:4000/getUser",{
+    method:"POST",
+    body:JSON.stringify({id}),
+    headers:{
+      "Content-Type":"application/json" 
+    }
+  }).then(res =>{
+return res.json()
+  }).then(res =>{
+   
+    dispatch(setId(res._id))
+    dispatch(setTasks(res.tasks))
+     dispatch(setSessions(res.sessions))
+  }).catch(err =>{
+    console.log(err)
+  })
+}
+  } 
+   
+   //AsyncStorage.clear() 
+  config()     
 },[])
 
 

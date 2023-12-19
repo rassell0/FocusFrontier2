@@ -10,22 +10,9 @@ const Task = ({task,index}) => {
 const [checked,setchecked] = useState(false)
 const {date,priority,taskName} = task
 
-const tasks = useSelector(state =>state.tasks)
+const tasks = useSelector(state =>state.user.tasks)
 
-const updateTask = () =>{
-  Alert.alert('Task Update', 'Do you really want to change or delete this task?', [
-    {
-      text: 'Update',
-      onPress: () => console.log('open modal next'),
-    },
-    {
-      text: 'Cancel',
-      onPress: () => console.log('Cancel Pressed'),
-      style: 'cancel',
-    },
-    {text: 'Delete', onPress: () => deleteTask(),style:"destructive"},
-  ]);
-}
+
 
 const deleteTask = () =>{
   Alert.alert('Delete Task', 'Do you really want to delete this task?', [
@@ -47,7 +34,7 @@ console.log(idk)
   const userRef = doc(db, "users",id);
   await updateDoc(userRef, {
     tasks :temp
-  })
+  }) 
 }
 
   return (
