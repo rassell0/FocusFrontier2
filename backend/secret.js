@@ -1,1 +1,0 @@
-module.exports = secretkey = "hi1qki7J2fYQpPoV"

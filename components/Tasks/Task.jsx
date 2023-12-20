@@ -4,43 +4,51 @@ import tailwind from 'twrnc'
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import {Ionicons} from "@expo/vector-icons"
 import { Alert } from 'react-native';
+import { addTask, setTasks } from '../../redux/user';
+import { collection, addDoc ,doc, getDoc,setDoc ,updateDoc} from "firebase/firestore"; 
+import { db } from '../../firebaseConfig';
 import { useDispatch,useSelector } from "react-redux"
 const Task = ({task,index}) => {
 
 const [checked,setchecked] = useState(false)
 const {date,priority,taskName} = task
 
-const tasks = useSelector(state =>state.user.tasks)
 
+const user = useSelector(state =>state.user)
 
+const dispatch = useDispatch()
 
 const deleteTask = () =>{
   Alert.alert('Delete Task', 'Do you really want to delete this task?', [
     {
       text: 'Cancel',
-      onPress: () => console.log('Cancel Pressed'),
+  
       style: 'cancel',
     },
-    {text: 'Delete', onPress: () => console.log('OK Pressed'),style:"destructive"},
+    {text: 'Delete', onPress:()=>{
+      const updatedTasks = [...user.tasks];
+      const removedTask = updatedTasks.splice(index, 1);
+      dispatch(setTasks(updatedTasks))
+      deleteFromDb(updatedTasks)
+    },style:"destructive"},
   ]);
 }
 
- const deleteFromDb = async () =>{
- // const id = await AsyncStorage.getItem("id")
-  let temp = tasks
-  let idk = temp.splice(index,1)
-console.log(idk) 
-  return
-  const userRef = doc(db, "users",id);
-  await updateDoc(userRef, {
-    tasks :temp
-  }) 
+ const deleteFromDb = async (data) =>{
+ 
+ 
+  const userDocRef = doc(db, "user", user.id);
+  await updateDoc(userDocRef, {
+      "tasks": data,
+  });
+
+
 }
 
   return (
     
      
-      <View style={[tailwind` rounded-lg w-2.3/5   p-4 my-4 `,{backgroundColor:"#404661"}]}>
+      <View style={[tailwind` rounded-lg w-2.3/5   p-4  mx-2 mt-4`,{backgroundColor:"#404661"}]}>
   
       <BouncyCheckbox
   size={30}
@@ -58,8 +66,8 @@ style={tailwind`text-2xl`}
 <Text style={[tailwind`text-sm text-center py-4`,{color:"#eaf3fe",textDecorationLine:checked ?"line-through" : "none"}]}>Due Date: {date}</Text>
 <Text style={[tailwind`text-base text-center`,{color:"#eaf3fe",textDecorationLine:checked ?"line-through" : "none"}]}>{priority} Priority</Text>
 <View style={tailwind`mt-2 flex-row justify-end`}>
-<TouchableOpacity onPress={deleteFromDb}>
-    <Ionicons size={30} color={"#eaf3fe"} name='create-outline'/>
+<TouchableOpacity onPress={deleteTask}>
+    <Ionicons size={25} color={"#eaf3fe"} name='trash-outline'/>
 </TouchableOpacity>
 </View>
 
@@ -72,9 +80,3 @@ style={tailwind`text-2xl`}
 
 export default Task
 
-//
-//
-
-/**
- * 
- */

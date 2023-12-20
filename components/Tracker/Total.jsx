@@ -14,7 +14,7 @@ const [totalStats,setTotalStats] = useState({
   timeFocused:0
 })
 
-console.log(totalStats.timeFocused / 60)
+
 useEffect(()=>{
 
 setTotalStats({

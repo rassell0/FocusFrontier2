@@ -26,7 +26,7 @@ const userSlice = createSlice({
       state.tasks.push(action.payload);
     },
     deleteTask:(state,action) =>{
-        state.tasks.splice(action.payload,1)
+        state.tasks = action.payload
     },
     setTasks:(state,action)=>{
         state.tasks = action.payload

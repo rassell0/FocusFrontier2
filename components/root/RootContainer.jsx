@@ -18,7 +18,7 @@ const RootContainer = () => {
     const Tab = createBottomTabNavigator()
 
 const idk = useSelector(state => state.user) 
-console.log(idk)
+
 const dispatch = useDispatch()
 useEffect(() => {
   const requestNotificationPermission = async () => {
@@ -33,42 +33,36 @@ useEffect(() => {
 
 useEffect(()=>{
 
-  async function config(){
-    const id = await AsyncStorage.getItem("id")
 
+
+async function config2(){
+  const id = await AsyncStorage.getItem("id")
 if(!id){
-  //10.2.3.232 maddie
-  // 192.168.1.71 mine
-   fetch("http://192.168.1.71:4000/createUser").then(res =>{
-      return res.json()
-    }).then(res=>{
-      AsyncStorage.setItem("id",res._id)
-     dispatch(setId(res._id))
-    }).catch(err =>{
-      console.log(err)
-    })
-}else{
-  fetch("http://192.168.1.71:4000/getUser",{
-    method:"POST",
-    body:JSON.stringify({id}),
-    headers:{
-      "Content-Type":"application/json" 
-    }
-  }).then(res =>{
-return res.json()
-  }).then(res =>{
-   
-    dispatch(setId(res._id))
-    dispatch(setTasks(res.tasks))
-     dispatch(setSessions(res.sessions))
-  }).catch(err =>{
-    console.log(err)
-  })
+  const docRef = await addDoc(collection(db, "user"), {
+    sessions:[],
+     tasks:[]
+   });
+   AsyncStorage.setItem("id",docRef.id)
+   dispatch(setId(docRef.id))
+ }else{
+  const docRef = doc(db, "user", id);
+const docSnap = await getDoc(docRef);
+
+
+dispatch(setId(id))
+dispatch(setTasks(docSnap.data().tasks))
+ dispatch(setSessions(docSnap.data().sessions))
+
+ }
+ 
 }
-  } 
+  
+
+
+
    
-   //AsyncStorage.clear() 
-  config()     
+ //  AsyncStorage.clear() 
+  config2()     
 },[])
 
 

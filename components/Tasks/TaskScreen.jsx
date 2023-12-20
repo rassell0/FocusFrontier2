@@ -17,9 +17,9 @@ const TaskScreen = () => {
 
   const tasks = useSelector(state =>state.user.tasks)
  
-const dispatch = useDispatch()
+
 const [showModal,setShowModal] = useState(false)
-const [allTasks,setAllTask] = useState([])
+
   function render({item,index}){
     
 return <Task task={item} index={index}/>
@@ -37,7 +37,7 @@ setShowModal(state => !state)
     <View style={[tailwind`flex-1 `,{backgroundColor:"#0f1117"}]}>
 
      {showModal && <TaskModal  closeModal={toggleModal}/>}
-<FlatList data={tasks} ListEmptyComponent={EmptyTaskScreen} columnWrapperStyle={tailwind`justify-around`} numColumns={2} renderItem={render}/>
+<FlatList data={tasks} ListEmptyComponent={EmptyTaskScreen} columnWrapperStyle={tailwind``} numColumns={2} renderItem={render}/>
 <TouchableOpacity onPress={toggleModal} style={[tailwind`w-15 h-15 rounded-full items-center justify-center absolute right-5 bottom-5`,{backgroundColor:"#404661"}]}>
 <Ionicons name='add' size={40} color="#eaf3fe"/>
      </TouchableOpacity>
